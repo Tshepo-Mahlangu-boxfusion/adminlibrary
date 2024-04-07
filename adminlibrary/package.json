@@ -9,12 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@material-ui/core": "^4.12.4",
+    "@mui/material": "^5.15.15",
+    "@types/lodash": "^4.17.0",
     "antd": "^5.15.3",
     "antd-style": "^3.6.1",
     "axios": "^1.6.8",
+    "lodash": "^4.17.21",
     "next": "14.1.4",
     "react": "^18",
     "react-dom": "^18",
+    "recharts": "^2.12.4",
     "redux-actions": "^3.0.0"
   },
   "devDependencies": {

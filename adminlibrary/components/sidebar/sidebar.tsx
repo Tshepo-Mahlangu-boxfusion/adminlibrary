@@ -1,52 +1,45 @@
+'use client'
 import React, { useState } from 'react';
-import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { DesktopOutlined, BookOutlined, PieChartOutlined, TeamOutlined, LogoutOutlined, SettingFilled } from '@ant-design/icons';
+import { Layout, Menu, Button } from 'antd';
+import Link from 'next/link';
 import { useStyles } from './styles/styles';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 
-type MenuItem = Required<MenuProps>['items'][number];
-
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  };
-}
-
-const items: MenuItem[] = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('Manage', 'sub2', <TeamOutlined />, [getItem('Shelf', '6'), getItem('Category', '8'),getItem('book', '9')]),
-  getItem('User', 'sub1', <UserOutlined />), 
-  getItem('Files', '10', <FileOutlined />),
+const navLinks = [
+  { name: "Dashboard", href: "/", icon: <PieChartOutlined /> },
+  { name: "Shelves", href: "/shelves", icon: <DesktopOutlined /> },
+  { name: "Categories", href: "/categories", icon: <TeamOutlined /> },
+  { name: "Books", href: "/book", icon: <BookOutlined /> },
 ];
 
-const SideBar = ({ children }: { children: React.ReactNode }) => {
-  const{styles}=useStyles();
+const SideBar = () => {
+  const { styles } = useStyles();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <Layout className={styles.layout}>
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+    <Layout>
+      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} className={styles.side}>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <div className={styles.list}>
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            {navLinks.map((link, index) => (
+              <Menu.Item key={index} icon={link.icon}>
+                <Link href={link.href}>{link.name}</Link>
+              </Menu.Item>
+            ))}
+          </Menu>
+        </div>
+        <div className={styles.ContainerButton}>
+          <Button className={styles.logoutButton}>
+            <LogoutOutlined />
+          </Button>
+          <Button className={styles.configButton}>
+            <SettingFilled />
+          </Button>
+        </div>
       </Sider>
-      <Layout>
-        <Content className={styles.content}>
-          
-            {children}
-       
-        </Content>
-      </Layout>
     </Layout>
   );
 };

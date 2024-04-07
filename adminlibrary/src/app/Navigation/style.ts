@@ -2,8 +2,9 @@ import { createStyles ,css} from "antd-style";
 
 export const useStyles=createStyles({
     side:css`
-    background-color:#873e23 !important;
-    position: !important;
+    background-color:#873e23 ;
+    height:100vh;
+    
     `,
     
     layout:css` 
@@ -19,22 +20,23 @@ export const useStyles=createStyles({
     display: flex;
     flex-direction: column;
     align-items: center; 
-   
+    width:100%;
+    background-color:#873e23 !important;
+    
     `,
     items:css`
     color: #fff;
     display: flex;
     justify-content: flex-start !important; 
     align-items: center;
-    width: 100%;
-    height: 60px; /* Set height to match line-height */
+    height: 60px; 
     text-decoration: none;
     box-sizing: border-box;
     transition: 0.5s;
     transition-property: background;
     &:hover{
       background: #d3a962;
-      width: 100%;
+      
     }
     `,
     logoutButton: css`
@@ -53,10 +55,11 @@ export const useStyles=createStyles({
     margin-bottom: 20px;
     transition: color 0.3s ease;
     position:absolute;
+    justify-content:center;
+    width:100%;
     bottom:0;
     display: flex;
     flex-direction: column;
-    margin-bottom:60px;
   `,       
       
 
