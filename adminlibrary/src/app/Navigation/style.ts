@@ -4,6 +4,7 @@ export const useStyles=createStyles({
     side:css`
     background-color:#873e23 ;
     height:100vh;
+    overflow:hidden;
     
     `,
     
@@ -41,15 +42,15 @@ export const useStyles=createStyles({
     `,
     logoutButton: css`
     transition: color 0.3s ease;
-    background-color:#873e23;
-    color:#fff;
+    background:'transparent';
+    color:#000;
     margin-bottom:10px;
     
   `, 
   configButton: css`
     transition: color 0.3s ease;
-    background-color:#873e23;
-    color:#fff;
+    background-color:'transparent';
+    color:#000;
   `,
   ContainerButton: css`  
     margin-bottom: 20px;

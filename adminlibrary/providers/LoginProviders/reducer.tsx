@@ -20,7 +20,7 @@ export function UserReducer(incomingState: IUserStateContext, action: ReduxActio
         case UserActionEnum.getUserIdDetailsRequest:
             return { ...incomingState, ...payload };
         case UserActionEnum.Count:
-             return {...payload };
+             return {...incomingState,...payload };
         default:
             return incomingState;
     }

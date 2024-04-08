@@ -2,10 +2,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Layout, Flex } from 'antd';
+import { Layout, Flex} from 'antd';
 import { useStyles } from "./Navigation/dashboard/styles/style";
 import { BookProvider } from "../../providers/BookProvider";
 import { UserProvider } from "../../providers/LoginProviders";
+import ConfigProvider from '../../providers/AppConfigProvider'
+import { TransactionProvider } from "../../providers/TransactionProvider";
 
 
 const inter = Inter({ subsets: ["cyrillic"] });
@@ -24,16 +26,17 @@ export default function RootLayout({
       </head>
       <body className={inter.className} style={{ height: '100%', margin: 0, }}>
       
-        <UserProvider>      
+        <UserProvider> 
+            
           <BookProvider>
-       
-             
-                  {children}
-              
-
-           
+             <ConfigProvider>
+             <TransactionProvider> 
+             {children}
+             </TransactionProvider>
+             </ConfigProvider> 
           </BookProvider>
         </UserProvider>
+      
       </body>
     </html>
   );

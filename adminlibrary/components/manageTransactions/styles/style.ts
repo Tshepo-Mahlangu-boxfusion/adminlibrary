@@ -3,7 +3,7 @@ import { createStyles, css } from "antd-style";
 export const useStyles = createStyles({
     main:css`
     width:100%;
-    min-height: 78vh;
+    min-height: 100vh;
     background: url(/assets/img/Shelf.png) no-repeat center center;
     background-color:#d3a962;
     background-position: left;
@@ -23,15 +23,12 @@ export const useStyles = createStyles({
     table:css`
     width:60%;
     position:relative;
-    height:500px;
     top: 50%;
     left: 40%;
     backdrop-filter: blur(1px) !important;
-    overflow-y:auto !important;
     `,
     tableContainer:css`
      width:80%;
-     height:60%;
     `,
     button:css`
     position:relative;

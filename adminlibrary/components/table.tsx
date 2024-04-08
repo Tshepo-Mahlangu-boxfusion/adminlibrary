@@ -1,52 +1,46 @@
-import React from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
+import { useTransactionActions, useTransactionState } from '../providers/TransactionProvider';
+import { ITransaction } from '../providers/TransactionProvider/context';
 
-const dataSource = [
-  {
-    key: '1',
-    title: 'Item 1',
-    user: 'User 1',
-    due: '2024-04-10',
-  },
-  {
-    key: '2',
-    title: 'Item 2',
-    user: 'User 2',
-    due: '2024-04-15',
-  },
-  {
-    key: '3',
-    title: 'Item 3',
-    user: 'User 3',
-    due: '2024-04-20',
-  },
-];
+
 
 const columns = [
-  {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
-  },
+  { title: 'Book', dataIndex: 'book',key:'id',width: '25%',render:(_:any,record:ITransaction)=>(record.book?.title)},
   {
     title: 'User',
-    dataIndex: 'user',
+    dataIndex: 'userId',
     key: 'user',
+    width: '25%',
   },
   {
     title: 'Due',
-    dataIndex: 'due',
+    dataIndex: 'overDue',
     key: 'due',
+    width: '25%'
   },
 ];
 
 const BorrowedBooksTable = () => {
+  useEffect(() => {
+    if (fetchtransaction) {
+      fetchtransaction();
+      
+      
+    }
+    
+  }, []); 
+const status=useTransactionState();
+const {fetchtransaction}=useTransactionActions();
+
   return (
 
       <Table
-        dataSource={dataSource}
+        dataSource={status.items}
         columns={columns}
-        pagination={false}
+        pagination={{ pageSize: 2 }}
+        style={{width:500}}
       />
 
   );

@@ -56,7 +56,6 @@ const deleteShelf = async (id:string) => {
 const updateShelf = async (payload:IShelf) => {
   try {
       const response = await instance.put(`https://localhost:44311/api/services/app/Shelf/Update`,payload);
-      // dispatch(UpdateDeleteAction(response.data.result.items))
       await fetchShelf;
   } catch (error) {
       console.error(error);

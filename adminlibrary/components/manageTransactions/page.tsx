@@ -1,9 +1,11 @@
 'use client'
 import React, { useState, useRef, useContext, useEffect } from 'react';
-import { Button, Form, Input, Table, Popconfirm, Select, Modal } from 'antd';
+import { Button, Form, Input, Table, Popconfirm, Select,Modal } from 'antd';
 import { useStyles } from './styles/style';
 import { useBook, useBookState } from '../../providers/BookProvider';
-import { ICategory, IShelf } from '../../providers/BookProvider/context';
+import { IShelf } from '../../providers/BookProvider/context';
+import { useTransactionActions, useTransactionState } from '../../providers/TransactionProvider';
+import { ITransaction } from '../../providers/TransactionProvider/context';
 
 const {Option}=Select;
 const {confirm}=Modal;
@@ -12,12 +14,11 @@ type InputRef = import('antd').InputRef;
 type item ={
   id?:string,
   name:string
-  shelfId?:string
 }
-const EditableContext = React.createContext<FormInstance<IShelf> | null>(null);
+const EditableContext = React.createContext<FormInstance<ITransaction> | null>(null);
 
 const EditableRow: React.FC<{ index: number }> = ({ index, ...props }) => {
-  const [form] = Form.useForm<item>();
+  const [form] = Form.useForm<ITransaction>();
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
@@ -83,32 +84,31 @@ interface EditableCellProps {
   title: React.ReactNode;
   editable: boolean;
   children: React.ReactNode;
-  dataIndex: keyof ICategory;
-  record: ICategory;
-  handleSave: (record: ICategory) => void;
+  dataIndex: keyof ITransaction;
+  record: ITransaction;
+  handleSave: (record: ITransaction) => void;
 }
 
-const ManageCategories:React.FC = () => {
-  const state=useBookState();
-  const {fetchShelf,updateShelf,createShelf,fetchCategory,deleteCategory}=useBook();
-  
+const ManageTransactions:React.FC = () => {
   useEffect(() => {
-    if (fetchShelf) {
-      fetchShelf();
+    if (fetchtransaction) {
+      fetchtransaction();
+      
     }
-    if(fetchCategory){
-      fetchCategory();
-    }
-  }, []); // Watch for changes in fetchShelf
+    
+  }, []); 
+const state=useBookState();
+const status=useTransactionState();
+const {deleteShelf,fetchShelf,updateShelf,createShelf}=useBook()
+const {fetchtransaction}=useTransactionActions();
+  
+console.log(status.items)
 
   const { styles } = useStyles();
 
-  // Update dataSource when BookShelf changes
-  useEffect(() => {
-    setDataSource(state?.BookCategory?? []);
-  }, [state.BookCategory]);
 
-  const [dataSource, setDataSource] = useState<item[]>([]);
+
+  const [dataSource, setDataSource] = useState<ITransaction[]>([]);
  
   
 
@@ -122,52 +122,18 @@ const ManageCategories:React.FC = () => {
     setDataSource(updatedDataSource); // Update the state with the new dataSource
   
     // Call the deleteShelf function to delete the shelf with the specified key
-    if (deleteCategory) {
-      deleteCategory(key);
+    if (deleteShelf) {
+      deleteShelf(key);
     }
   };
   
-
-  const handleAdd = () => {
-    const newData: item = {
-
-      name: `Name Your Category`,
-
-    }
-   
-    if(dataSource)
-    setDataSource([...dataSource, newData]);
-    setCount(count + 1);
-  }
-  const handleSave = (row: IShelf) => {
-
-    if (dataSource) {
-      if(row.id==null){
-        if(createShelf)
-          createShelf(row)
-      }
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.id === item.id);
-      const item = newData[index];
-  
-      // Assuming updateShelf is a function to update the shelf, pass the row.id to updateShelf
-      
-      if (row.id!==null&&updateShelf) {
-        updateShelf(row);
-      }
-      console.log(row)
-  
-      newData.splice(index, 1, { ...item, ...row });
-      setDataSource(newData);
-    }
-  };
-  function handleStatusChange(value: number, record: IShelf) {
+  function handleStatusChange(value: number, record: ITransaction) {
     // Handle the status change here, you might dispatch an action if using Redux or update the state
     var status={id:record.id,status:value}
     // if(changeBookState){changeBookState(status)}
 }
 
-  const showConfirm=(value: number, record: IShelf)=> {
+  const showConfirm=(value: number, record: ITransaction)=> {
     confirm({
         title: 'Do you want to save changes?',
         onOk() {
@@ -177,41 +143,39 @@ const ManageCategories:React.FC = () => {
             // Handle cancel action if needed
         },
     });
-}
-
-
+  }
   const components = {
     body: {
       row: EditableRow,
       cell: EditableCell,
     },
-  };
-
+  }
   const columns = [
-    { title: 'Category', dataIndex: 'name', editable: true },
+    { title: 'Ref', dataIndex: 'id' },
+    { title: 'Book', dataIndex: 'book',key:'id',render:(_:any,record:ITransaction)=>(record.book?.title)},
     {
-      title: 'Shelves',
-      dataIndex: 'shelves',
+      title: 'Status',
+      dataIndex: 'status',
       key: 'shelves',
-      width: '20%',
-      render: (status: number, record:IShelf) => (
+      width: '10%',
+      render: (status: number, record:ITransaction) => (
           <Select
               key={record.id}
               defaultValue={status}
               style={{ width: '100%' }}
               onChange={(value:number) => showConfirm(value, record)}
           >
-            {state?.BookShelf?.map((item,index)=>(
-               <Option key={index} value={index}>{item.name}</Option>
-            ))}
-             
-             
+            
+          <Option key={record.id} value={0}>Ready be to Collected</Option>
+          <Option key={record.id} value={1}>Collected</Option>
+          <Option key={record.id} value={2}>Returned</Option>
+          <Option key={record.id} value={3}>Overdue</Option>  
           </Select>)
   },
     {
       title: 'Operation',
       dataIndex: 'operation',
-      render: (_:any,record:item) =>
+      render: (_:any,record:ITransaction) =>
         (
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id?record?.id:'')}>
             <a>Delete</a>
@@ -222,27 +186,18 @@ const ManageCategories:React.FC = () => {
 
   return (
     <div className={styles.main}>
-      <h1 className={styles.h1}>Add categories!  </h1>
+      <h1 className={styles.h1}>Manage Transactions</h1>
       <div >
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }} className={styles.button}>
-        Add 
-      </Button>
+      
       <Table
-       pagination={{ pageSize: 20 }}
         className={styles.table}
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
-        dataSource={dataSource}
+        dataSource={status.items&&status.items}
+        pagination={{ pageSize: 3 }}
         columns={columns.map((col) => ({
-          ...col,
-          onCell: (record: item) => ({
-            record,
-            editable: col.editable,
-            dataIndex: col.dataIndex,
-            title: col.title,
-            handleSave,
-          }),
+          ...col
         }))}
       />
       </div>
@@ -250,4 +205,4 @@ const ManageCategories:React.FC = () => {
   );
 }
 
-export default ManageCategories;
+export default ManageTransactions;

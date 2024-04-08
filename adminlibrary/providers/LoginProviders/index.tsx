@@ -13,21 +13,24 @@ const UserProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
  
   const loginUser = async (payload: ILogin) => {
-    console.log(payload);
     try {
       const response = await instance.post(`${process.env.NEXT_PUBLIC_PASS}/TokenAuth/Authenticate`, payload);
       if (response.data.success) {
-        localStorage.setItem('token', response.data.result.accessToken);
+        localStorage.setItem('Token', response.data.result.accessToken);
         dispatch(loginUserRequestAction(response.data.result));
+        console.log(response.data.result.currentUser?.roleNames)
         dispatch(getUserIdDetailsRequestAction(response.data.result.userId.user));
-        if (response.data.result.userId==1) {
+        
+        await getUserDetails();
+        console.log(state)
+        if (state.currentUser?.roleNames.includes("Admin.Roles")||state.currentUser?.roleNames.includes("Super.Roles")) {
           push("/Navigation/dashboard");
           console.log(response.data.result);
           message.success('Login successful');
         } else {
-          push("/dashboard");
-         
-          message.success('Login successful');
+          // push("/dashboard");
+         console.log(state.currentUser?.roleNames)
+          // message.success('Login successful');
         }
       } else {
         message.error('Invalid username or password');
@@ -53,21 +56,23 @@ const UserProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
       console.error("User creation error:", error);
       message.error("username or name already in use");
     }
-  };
-
-  const getUserDetails = async (): Promise<IUser> => {
-    const token = localStorage.getItem("token");
+  }
+  const getUserDetails = async ()=> {
+    const Token = localStorage.getItem("Token");
     try {
-      const response = await instance.get(`${process.env.NEXT_PUBLIC_PASS}/services/app/Session/GetCurrentLoginInformations`, {
+      await instance.get(`${process.env.NEXT_PUBLIC_PASS}/services/app/Person/GetCurrentPerson`, {
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${Token}`
         },
+      }).then(data=>{
+        console.log(data)
+        dispatch(setCurrentUserRequestAction(data.data.result))
       });
-      const user = response.data.result.user;
-      dispatch(setCurrentUserRequestAction(user));
-      dispatch(getUserIdDetailsRequestAction(response.data.result));
-      return user; // Return the user details
+      //const user = response.data.result.user;
+      
+      //dispatch(getUserIdDetailsRequestAction(response.data.result));
+//return user; // Return the user details
     } catch (error) {
       message.error("User not logged");
       throw error; // Re-throw the error to be handled by the caller
@@ -85,8 +90,8 @@ const UserProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const logOutUser = () => {
     dispatch(logOutUserRequestAction());
-    localStorage.removeItem('token');
-    push('/login');
+    localStorage.removeItem('Token');
+    push('/');
   };
 
   return (
@@ -121,4 +126,4 @@ const useUser:any = (): IUserStateContext & IUserActionContext => {
   };
 };
 
-export { UserProvider, useUser,useLoginState };
+export { UserProvider, useUser,useLoginState,useLoginActions };

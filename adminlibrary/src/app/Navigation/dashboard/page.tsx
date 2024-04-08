@@ -17,17 +17,21 @@ import PieChartComponent from "../../../../components/pieChart";
 import LineGraphComponent from "../../../../components/lineChart";
 import  { useLoginState, useUser } from "../../../../providers/LoginProviders";
 import WithAuth from "../../../../HOC/withAuth/page";
+import { useTransactionActions, useTransactionState } from "../../../../providers/TransactionProvider";
 
 
 const Dashboard = () => {
   const { styles } = useStyles();
   const state=useBookState();
   const s=useLoginState();
+  const status=useTransactionState();
+  const {countTransaction}=useTransactionActions();
   const {countBooks}=useBook();
   const {countUser}=useUser();
   useEffect(()=>{
       countBooks&&countBooks();
       countBooks&&countUser();
+      countTransaction&&countTransaction();
   },[])
  
 
@@ -63,7 +67,7 @@ const Dashboard = () => {
                 padding: 8,
               }}
             />
-            <Statistic title="Overdue Books" value={5245} />
+            <Statistic title="Overdue Books" value={2} />
           </Space>
         </Card>
         <Card style={{ background: "transparent" }}>
@@ -77,7 +81,7 @@ const Dashboard = () => {
                 padding: 8,
               }}
             />
-            <Statistic title="Borrowed Books" value={5245} />
+            <Statistic title="Borrowed Books" value={`${status.CountTransaction}`} />
           </Space>
         </Card>
         <Card style={{ background: "transparent" }}>
@@ -100,7 +104,7 @@ const Dashboard = () => {
         <Card style={{ width: "200%", background: "transparent" }}>
           <BorrowedBooksTable />
         </Card>
-        <Card style={{ width: "100%", marginLeft: "50%", background: "transparent" }}>
+        <Card style={{ width: "100%", marginLeft: "20%", background: "transparent" }}>
           <BarChartComponent />
         </Card>
       </Space>
@@ -121,5 +125,5 @@ const Dashboard = () => {
     </div>  );
 };
 
-export default WithAuth(Dashboard);
+export default Dashboard;
 

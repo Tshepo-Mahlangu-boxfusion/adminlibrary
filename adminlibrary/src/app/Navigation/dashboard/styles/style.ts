@@ -5,12 +5,12 @@ import { createStyles, css } from "antd-style";
 export const useStyles = createStyles({
   main:css`
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     display: flex; /* Use flexbox */
     justify-content: center; /* Center items horizontally */
-   
-    background-color: #d3a962;
     background-position: left;
+    overflow:hidden;
+    padding-right:50px;
   `,
   title: css`
     marginLeft: '45%';

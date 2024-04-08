@@ -20,6 +20,7 @@
     "lodash": "^4.17.21",
     "next": "14.1.4",
     "react": "^18",
+    "react-color": "^2.19.3",
     "react-dom": "^18",
     "recharts": "^2.12.4",
     "redux-actions": "^3.0.0"
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18",
     "@types/redux-actions": "^2.6.5",
     "eslint": "^8",

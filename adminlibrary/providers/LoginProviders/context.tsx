@@ -14,6 +14,7 @@ export interface ILogin{
     phoneNumber: string;
     emailAddress: string;
     password: string;
+    roleNames:string[];
 
   }
    export interface ICountUser{
@@ -40,7 +41,7 @@ export interface IUserActionContext{
   createUser?:(payload:IUser) => void;
   logOutUser?:() => void;
   setCurrentUser?:(user:IUser) => void;
-  getUserDetails?: () => Promise<IUser>;
+  getUserDetails?: () => void;
   setUserId?: (userId: number) => void;
   countUser?:()=>void;
 }
