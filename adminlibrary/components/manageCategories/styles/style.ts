@@ -3,8 +3,8 @@ import { createStyles, css } from "antd-style";
 export const useStyles = createStyles({
     main:css`
     width:100%;
-    min-height: 78vh;
-    background: url(/assets/img/Shelf.png) no-repeat center center;
+    min-height: 93vh;
+    background: url(/assets/img/category.png) no-repeat center center;
     background-color:#d3a962;
     background-position: left;
     padding:40px;

@@ -1,7 +1,7 @@
 import { useContext, useReducer, FC, PropsWithChildren} from "react"
 import { ConfigReducer } from "./reducer";
 import { IConfig, IConfigActionStateContext, IConfigStateContext, INITIAL_STATE } from "./context";
-import { ConfigAction } from "./actions";
+import { ConfigAction, fetchConfigAction } from "./actions";
 import { ConfigActionContext,ConfigContext } from "./context";
 import { instance } from "../axiosInstance";
 
@@ -20,9 +20,18 @@ const ConfigProvider :FC<PropsWithChildren<{}>> = ({ children }) => {
             console.error(error);
         }
       };
+      const fetchConfig = async () => {
+        try {
+            const response = await instance.get(`https://localhost:44311/api/services/app/AppConfiguration/GetAll`);
+           dispatch(fetchConfigAction(response.data.result))
+           console.log(response.data,'data')
+        } catch (error) {
+            console.error(error);
+        }
+      };
     return(
      <ConfigContext.Provider value={states}>
-        <ConfigActionContext.Provider value={{createConfig}}>
+        <ConfigActionContext.Provider value={{createConfig,fetchConfig}}>
             {children}
         </ConfigActionContext.Provider>
      </ConfigContext.Provider>

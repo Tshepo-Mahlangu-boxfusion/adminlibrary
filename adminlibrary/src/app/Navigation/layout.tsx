@@ -3,7 +3,7 @@
 
 import { useStyles } from './style';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { DesktopOutlined,MenuUnfoldOutlined,MenuFoldOutlined, BookOutlined, PieChartOutlined, TeamOutlined, LogoutOutlined, SettingFilled } from '@ant-design/icons';
+import { DesktopOutlined,MenuUnfoldOutlined,MenuFoldOutlined,AppstoreOutlined, BookOutlined, PieChartOutlined, TeamOutlined, LogoutOutlined, SettingFilled ,TransactionOutlined } from '@ant-design/icons';
 import { Layout, Menu, Button, theme } from 'antd';
 import Link from 'next/link';
 import { useLoginActions, useLoginState, useUser } from '../../../providers/LoginProviders';
@@ -32,8 +32,8 @@ const App: React.FC<PropsWithChildren> = ({children}) => {
   const navLinks = [
     { name: "Dashboard", href: "/Navigation/dashboard", icon: <PieChartOutlined /> },
     { name: "Shelves", href: "/Navigation/shelves", icon: <DesktopOutlined /> },
-    { name: "Categories", href: "/Navigation/categories", icon: <TeamOutlined /> },
-    { name: "Transactions", href: "/Navigation/transactions", icon: <BookOutlined /> },
+    { name: "Categories", href: "/Navigation/categories", icon: <AppstoreOutlined /> },
+    { name: "Transactions", href: "/Navigation/transactions", icon: <TransactionOutlined />},
     { name: "Books", href: "/Navigation/book", icon: <BookOutlined /> },
   ];
 

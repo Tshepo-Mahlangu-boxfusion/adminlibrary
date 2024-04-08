@@ -228,7 +228,7 @@ const ManageCategories:React.FC = () => {
         Add 
       </Button>
       <Table
-       pagination={{ pageSize: 20 }}
+       pagination={{ pageSize: 5 }}
         className={styles.table}
         components={components}
         rowClassName={() => 'editable-row'}
