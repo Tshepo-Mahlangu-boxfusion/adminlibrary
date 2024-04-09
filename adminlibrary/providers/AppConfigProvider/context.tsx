@@ -2,7 +2,7 @@ import {createContext} from 'react';
 
 
 export interface IConfig{ 
-  id:number
+  id?:string;
   name?:string;
   welcomeMessage?:string;
   address?:string; 

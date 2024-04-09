@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
+import { Form, Input, Button, Row, Col, ColorPicker } from 'antd';
 import { ChromePicker } from 'react-color';
 import { useConfigAction, useConfigState } from '../../../../providers/AppConfigProvider';
 import { IConfig } from '../../../../providers/AppConfigProvider/context';
@@ -16,23 +16,34 @@ const FormDisabledDemo: React.FC = () => {
 
   const [primaryColorVisible, setPrimaryColorVisible] = useState<boolean>(false);
   const [secondaryColorVisible, setSecondaryColorVisible] = useState<boolean>(false);
+  const [color,setColor]=useState('');
+  const [scolor,setsColor]=useState('');
 
   const handleSubmit = (values: IConfig) => {
-    console.log(values)
-    if (createConfig && state?.FetchConfig?.id) {
-      const updatedValues = { ...values, id: state.FetchConfig.id };
+    if(values.primaryColor==undefined){
+      values.primaryColor=color;
+    }
+    if(values.secondaryColor==undefined){
+      values.secondaryColor=color;
+    }
+    console.log(state)
+    if (createConfig ) {
+      const updatedValues = { ...values, id: state?.FetchConfig&&state.FetchConfig?.id };
       createConfig(updatedValues);
     }
   };
 
   return (
+    <>
+    <h1>Configure your library</h1>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '1200px' }}>
+      
       <Form
         onFinish={handleSubmit}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 600 }}
+        style={{ minWidth: 900 }}
       >
         <Form.Item name="name">
           <Input placeholder="Name" />
@@ -47,13 +58,7 @@ const FormDisabledDemo: React.FC = () => {
           <Col span={12}>
             <Form.Item name="primaryColor">
               <Button onClick={() => setPrimaryColorVisible(true)}>Select Primary Color</Button>
-              {primaryColorVisible && <ChromePicker />}
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item name="secondaryColor">
-              <Button onClick={() => setSecondaryColorVisible(true)}>Select Secondary Color</Button>
-              {secondaryColorVisible && <ChromePicker />}
+              {primaryColorVisible &&<ColorPicker value={color} onChange={(e)=>setColor(e.toHexString())}/>}
             </Form.Item>
           </Col>
         </Row>
@@ -71,6 +76,7 @@ const FormDisabledDemo: React.FC = () => {
         </Form.Item>
       </Form>
     </div>
+    </>
   );
 };
 

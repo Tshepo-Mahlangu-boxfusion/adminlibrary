@@ -3,16 +3,16 @@ import { ConfigActionEnums } from "./actions";
 
 export function ConfigReducer(incomingState:IConfigStateContext,action:ReduxActions.Action<IConfigStateContext>):IConfigStateContext{
      const {type,payload}= action;
-   
+    console.log(payload,'data')
     switch(type){ 
         
         case ConfigActionEnums.Config:
                 return {
-                    ...incomingState,...action.payload
+                    ...incomingState,...payload
                 }
         case ConfigActionEnums.FetchConfig:
                 return {
-                    ...incomingState,...action.payload
+                    ...payload
                 }         
         default:
             return incomingState;

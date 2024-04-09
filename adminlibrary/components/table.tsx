@@ -16,7 +16,7 @@ const columns = [
   },
   {
     title: 'Due',
-    dataIndex: 'overDue',
+    dataIndex: 'dueDate',
     key: 'due',
     width: '25%'
   },

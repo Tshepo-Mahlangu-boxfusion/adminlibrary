@@ -4,6 +4,7 @@ import { IConfig, IConfigActionStateContext, IConfigStateContext, INITIAL_STATE 
 import { ConfigAction, fetchConfigAction } from "./actions";
 import { ConfigActionContext,ConfigContext } from "./context";
 import { instance } from "../axiosInstance";
+import { message } from 'antd';
 
 
 
@@ -15,7 +16,10 @@ const ConfigProvider :FC<PropsWithChildren<{}>> = ({ children }) => {
     const createConfig = async (payload:IConfig) => {
         try {
             const response = await instance.put(`https://localhost:44311/api/services/app/AppConfiguration/Update`,payload);
-           
+            if (response.data.success) {
+              message.success("Settings updated");
+              
+            } 
         } catch (error) {
             console.error(error);
         }
@@ -23,7 +27,7 @@ const ConfigProvider :FC<PropsWithChildren<{}>> = ({ children }) => {
       const fetchConfig = async () => {
         try {
             const response = await instance.get(`https://localhost:44311/api/services/app/AppConfiguration/GetAll`);
-           dispatch(fetchConfigAction(response.data.result))
+           dispatch(fetchConfigAction(response.data.result.items[0]))
            console.log(response.data,'data')
         } catch (error) {
             console.error(error);
