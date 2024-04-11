@@ -15,29 +15,48 @@ const TransactionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
             if (response.data.success) {
                 message.success("Fetched successfully");
                 dispatch(FetchTransactionRequestAction(response.data.result));
-                console.log(response.data.result)
-                console.log(status)
+              
             } else {
                 message.error("Failed");
             }
         }
         catch(error:any){
-            message.error(error.data.error.message)
+            message.error(error?.data?.error?.message)
         }
     }
     const countTransaction = async () => {
         try {
             const response = await instance.get(`https://localhost:44311/api/services/app/Transaction/GetTranCount`);
             dispatch(TransactionCountRequestAction(response.data.result));
-            console.log(response.data.result)
         } catch (error) {
             console.error(error);
         }
       };
-
+      const updateTransaction = async (payload:ITransaction)=>{
+        try{
+            const response= await instance.put('https://localhost:44311/api/services/app/Transaction/Update',payload)
+            if(response.data.success){
+                message.success("Updated successfully")
+            }
+        }catch(error){
+            console.error(error)
+        }
+      }
+      const deleteTransaction =async (id:string)=>{
+        try{
+            const response = await instance.delete(`https://localhost:44311/api/services/app/Transaction/Delete?Id=${id}`)
+            if(response.data.success){
+                fetchtransaction();
+                message.warning("Deleted")
+            }
+    
+        }catch(error){
+            console.error(error)
+        }
+    }
     return (
         <TransactionContext.Provider value={status}>
-            <TransactionActionContext.Provider value={{fetchtransaction,countTransaction}}>
+            <TransactionActionContext.Provider value={{fetchtransaction,countTransaction,updateTransaction,deleteTransaction}}>
                 {children}
             </TransactionActionContext.Provider>
         </TransactionContext.Provider>

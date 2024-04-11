@@ -81,4 +81,4 @@ const App: React.FC<PropsWithChildren> = ({children}) => {
   );
 };
 
-export default WithAuth(App);
+export default App;

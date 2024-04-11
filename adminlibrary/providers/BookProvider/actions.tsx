@@ -1,5 +1,5 @@
 import { createAction} from 'redux-actions';
-import { IShelf,IBookStateContext, ICountBook, ICategory } from "./context";
+import { IShelf,IBookStateContext, ICountBook, ICategory, IBook } from "./context";
 
 export enum BookActionEnum{
    
@@ -7,9 +7,17 @@ export enum BookActionEnum{
     Shelf="SHELF",
     deleteShelf="DELETESHELF",
     updateShelf="UPDATESHELF",
+
     Count="COUNT",
+    CreateCategoryRequest="CREATECATEGORY",
     Category="CATEGORY",
-    deleteCategory="DELETESHELF"
+    deleteCategory="DELETESHELF",
+    UpdateCategory="UPDATECATEGORY",
+
+    CreateBook="CREATEBOOK",
+    FetchBook="FETCHBOOK",
+    DeleteBook="DELETEBOOK",
+    UpdateBook="UPDATEBOOK"
 }
 
 //shelf
@@ -22,3 +30,11 @@ export const BookCountRequestAction = createAction<IBookStateContext, ICountBook
 //Category
 export const CategoryAction=createAction<IBookStateContext,ICategory[]>(BookActionEnum.Category,(BookCategory)=>({BookCategory}))
 export const UpdateDeleteCategoryAction = createAction<IBookStateContext, ICategory>(BookActionEnum.deleteCategory,(DeleteCategory)=>({DeleteCategory}))
+export const UpdateCategoryAction = createAction<IBookStateContext, ICategory>(BookActionEnum.UpdateCategory,(UpdateCategory)=>({UpdateCategory}))
+export const createCategoryRequestAction=createAction<IBookStateContext,ICategory>(BookActionEnum.CreateCategoryRequest,(CreateCategory)=>({CreateCategory}));
+
+//book
+export const createBookRequestAction=createAction<IBookStateContext,IBook>(BookActionEnum.CreateBook,(CreateBook)=>({CreateBook}));
+export const FetchBookAction = createAction<IBookStateContext,IBook[]>(BookActionEnum.CreateCategoryRequest,(FetchBook)=>({FetchBook}));
+export const DeleteBookAction= createAction<IBookStateContext,string>(BookActionEnum.DeleteBook,(DeleteBook)=>({DeleteBook}));
+export const updateBookAction= createAction<IBookStateContext,IBook>(BookActionEnum.UpdateBook,(UpdateBook)=>({UpdateBook}))

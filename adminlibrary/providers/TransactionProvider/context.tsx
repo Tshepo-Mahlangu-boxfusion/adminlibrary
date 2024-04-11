@@ -23,6 +23,7 @@ export interface ITransaction{
     bookId?:string | undefined;
     UserId?:string;
     book?:IBook;
+    ref?:string;
     user?:IUser;
     status?:number;
 }
@@ -33,11 +34,15 @@ export const INITIAL_STATE:ITransactionStateContext={};
 export interface ITransactionStateContext{
     items?: ITransaction[];
     readonly CountTransaction?:ICount;
+    readonly UpdateTransaction?:ICount;
+    readonly DeleteTransaction?:void;
 }
 
 export interface ITransactionActionContext{
     fetchtransaction?:() =>void;
     countTransaction?:()=>void;
+    updateTransaction?:(payload:ITransaction)=>void;
+    deleteTransaction?:(payload:string)=>void;
 }
 
 const TransactionContext = createContext<ITransactionStateContext>(INITIAL_STATE);

@@ -1,11 +1,10 @@
 'use client'
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Button, Form, Input, Table, Popconfirm, Select,Modal } from 'antd';
-import { useStyles } from './styles/style';
-import { useBook, useBookState } from '../../providers/BookProvider';
-import { IShelf } from '../../providers/BookProvider/context';
+import {DeleteOutlined}  from '@ant-design/icons';
 import { useTransactionActions, useTransactionState } from '../../providers/TransactionProvider';
 import { ITransaction } from '../../providers/TransactionProvider/context';
+import { useStyles } from './styles/style';
 
 const {Option}=Select;
 const {confirm}=Modal;
@@ -97,22 +96,13 @@ const ManageTransactions:React.FC = () => {
     }
     
   }, []); 
-const state=useBookState();
+
+
 const status=useTransactionState();
-const {deleteShelf,fetchShelf,updateShelf,createShelf}=useBook()
-const {fetchtransaction}=useTransactionActions();
-  
-console.log(status.items)
-
-  const { styles } = useStyles();
-
-
-
+const {fetchtransaction,updateTransaction,deleteTransaction}=useTransactionActions();
   const [dataSource, setDataSource] = useState<ITransaction[]>([]);
- 
-  
-
   const [count, setCount] = useState(2);
+  const {styles}=useStyles();
 
   
 
@@ -122,15 +112,16 @@ console.log(status.items)
     setDataSource(updatedDataSource); // Update the state with the new dataSource
   
     // Call the deleteShelf function to delete the shelf with the specified key
-    if (deleteShelf) {
-      deleteShelf(key);
+    if (deleteTransaction) {
+      deleteTransaction(key);
     }
   };
   
   function handleStatusChange(value: number, record: ITransaction) {
     // Handle the status change here, you might dispatch an action if using Redux or update the state
     var status={id:record.id,status:value}
-    // if(changeBookState){changeBookState(status)}
+    record.status=value;
+   if(updateTransaction){updateTransaction(record)}
 }
 
   const showConfirm=(value: number, record: ITransaction)=> {
@@ -151,7 +142,7 @@ console.log(status.items)
     },
   }
   const columns = [
-    { title: 'Ref', dataIndex: 'id' },
+    { title: 'Ref', dataIndex: 'ref' },
     { title: 'Book', dataIndex: 'book',key:'id',render:(_:any,record:ITransaction)=>(record.book?.title)},
     {
       title: 'Status',
@@ -177,12 +168,13 @@ console.log(status.items)
       dataIndex: 'operation',
       render: (_:any,record:ITransaction) =>
         (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id?record?.id:'')}>
+          <Popconfirm  title onConfirm={() => handleDelete(record.id?record?.id:'')}>
             <a>Delete</a>
           </Popconfirm>
         ) 
     },
   ];
+
 
   return (
     <div className={styles.main}>

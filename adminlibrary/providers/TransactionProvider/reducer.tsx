@@ -11,9 +11,11 @@ export function TransactionReducer(incomingState: ITransactionStateContext, acti
             return {...incomingState,...payload};
             case TransactionActionEnum.Count:
                 return {...incomingState, ...payload } 
-       
+       case TransactionActionEnum.Update:
+            return{...incomingState,...payload}
+        case TransactionActionEnum.Delete:
+            return{...incomingState,...payload}
         default:
-            
             return incomingState;
     }
 }

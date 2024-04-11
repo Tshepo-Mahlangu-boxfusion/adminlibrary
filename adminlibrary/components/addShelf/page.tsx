@@ -1,9 +1,11 @@
 'use client'
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Button, Form, Input, Table, Popconfirm } from 'antd';
+import {DeleteFilled,PlusCircleFilled} from '@ant-design/icons';
 import { useStyles } from './styles/style';
 import { useBook, useBookState } from '../../providers/BookProvider';
 import { IShelf } from '../../providers/BookProvider/context';
+import { Icon } from '@material-ui/core';
 
 
 type FormInstance<T> = import('antd').GetRef<typeof Form<T>>;
@@ -167,14 +169,15 @@ const ManageShelves:React.FC = () => {
   };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', editable: true },
+    { title: 'Name', dataIndex: `name`, editable: true },
     {
       title: 'Operation',
       dataIndex: 'operation',
+      width: '2%',
       render: (_:any,record:item) =>
         (
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id?record?.id:'')}>
-            <a>Delete</a>
+            <a><DeleteFilled /></a>
           </Popconfirm>
         ) 
     },
@@ -184,8 +187,8 @@ const ManageShelves:React.FC = () => {
     <div className={styles.main}>
       <h1 className={styles.h1}>Build Your Shelf</h1>
       <div >
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }} className={styles.button}>
-        Add 
+      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }} className={styles.button} icon={<PlusCircleFilled />}>
+        Add
       </Button>
       <Table
         className={styles.table}

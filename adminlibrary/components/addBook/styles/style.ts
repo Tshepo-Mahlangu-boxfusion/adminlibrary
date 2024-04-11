@@ -4,11 +4,11 @@ export const useStyles = createStyles({
     main:css`
     width:100%;
     min-height: 100vh;
-    background: url(/assets/img/Shelf.png) no-repeat center center;
+    background: url(/assets/img/Add.png) no-repeat center center;
     background-color:#d3a962;
     background-position: left;
-    padding:40px;
-    `, 
+
+    `,  
     container:css`
     width: 50%;
     transform: translate(-50%, -50%);
@@ -20,12 +20,13 @@ export const useStyles = createStyles({
     padding: 50px 35px;
     font-family: 'Poppins', sans-serif;
     ` ,
-    table:css`
-    width:60%;
+    form:css`
+    width:40%;
     position:relative;
     top: 50%;
-    left: 40%;
+    left: 50%;
     backdrop-filter: blur(1px) !important;
+    overflow-y:auto;
     `,
     tableContainer:css`
      width:80%;
@@ -42,9 +43,9 @@ export const useStyles = createStyles({
     `,
     h1:css`
         font-family: 'Poppins', sans-serif;
+        padding:20px;
         font-size: 2.5rem; /* Adjust size as needed */
         font-weight: bold; /* Adjust weight as needed */
         color: #333; /* Adjust color as needed */
-       
-    `
+       `
 })

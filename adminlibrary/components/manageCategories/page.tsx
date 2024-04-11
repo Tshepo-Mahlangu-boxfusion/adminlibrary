@@ -4,16 +4,14 @@ import { Button, Form, Input, Table, Popconfirm, Select, Modal } from 'antd';
 import { useStyles } from './styles/style';
 import { useBook, useBookState } from '../../providers/BookProvider';
 import { ICategory, IShelf } from '../../providers/BookProvider/context';
+import {DeleteFilled,PlusCircleFilled } from '@ant-design/icons';
 
 const {Option}=Select;
 const {confirm}=Modal;
 type FormInstance<T> = import('antd').GetRef<typeof Form<T>>;
 type InputRef = import('antd').InputRef;
-type item ={
-  id?:string,
-  name:string
-  shelfId?:string
-}
+// category
+type item =ICategory;
 const EditableContext = React.createContext<FormInstance<IShelf> | null>(null);
 
 const EditableRow: React.FC<{ index: number }> = ({ index, ...props }) => {
@@ -90,7 +88,7 @@ interface EditableCellProps {
 
 const ManageCategories:React.FC = () => {
   const state=useBookState();
-  const {fetchShelf,updateShelf,createShelf,fetchCategory,deleteCategory}=useBook();
+  const {fetchShelf,updateShelf,createShelf,fetchCategory,deleteCategory,createCategory,updateCategory}=useBook();
   
   useEffect(() => {
     if (fetchShelf) {
@@ -110,11 +108,7 @@ const ManageCategories:React.FC = () => {
 
   const [dataSource, setDataSource] = useState<item[]>([]);
  
-  
-
-  const [count, setCount] = useState(2);
-
-  
+  const [count, setCount] = useState(2); 
 
   const handleDelete = (key: string) => {
     // Filter the dataSource to remove the item with the specified key
@@ -129,22 +123,23 @@ const ManageCategories:React.FC = () => {
   
 
   const handleAdd = () => {
-    const newData: item = {
-
+    const newData: any = {
       name: `Name Your Category`,
-
-    }
-   
-    if(dataSource)
+      shelfId:''
+    };
+  
+    // Update the dataSource state with the new item
     setDataSource([...dataSource, newData]);
+    
+    // Increment the count for generating unique IDs
     setCount(count + 1);
-  }
-  const handleSave = (row: IShelf) => {
+  };
+  const handleSave = (row: item) => {
 
     if (dataSource) {
       if(row.id==null){
-        if(createShelf)
-          createShelf(row)
+        if(createCategory)
+          createCategory(row)
       }
       const newData = [...dataSource];
       const index = newData.findIndex((item) => row.id === item.id);
@@ -152,8 +147,8 @@ const ManageCategories:React.FC = () => {
   
       // Assuming updateShelf is a function to update the shelf, pass the row.id to updateShelf
       
-      if (row.id!==null&&updateShelf) {
-        updateShelf(row);
+      if (row.id!==null&&updateCategory) {
+        updateCategory(row);
       }
       console.log(row)
   
@@ -161,13 +156,14 @@ const ManageCategories:React.FC = () => {
       setDataSource(newData);
     }
   };
-  function handleStatusChange(value: number, record: IShelf) {
+  function handleStatusChange(value: string, record: item) {
     // Handle the status change here, you might dispatch an action if using Redux or update the state
-    var status={id:record.id,status:value}
-    // if(changeBookState){changeBookState(status)}
+   console.log(value,'value',record,'record')
+    record.shelfId=value;
+   if(updateCategory){updateCategory(record)}
 }
 
-  const showConfirm=(value: number, record: IShelf)=> {
+  const showConfirm=(value: string, record: item)=> {
     confirm({
         title: 'Do you want to save changes?',
         onOk() {
@@ -178,7 +174,6 @@ const ManageCategories:React.FC = () => {
         },
     });
 }
-
 
   const components = {
     body: {
@@ -194,60 +189,64 @@ const ManageCategories:React.FC = () => {
       dataIndex: 'shelves',
       key: 'shelves',
       width: '20%',
-      render: (status: number, record:IShelf) => (
-          <Select
-              key={record.id}
-              defaultValue={status}
-              style={{ width: '100%' }}
-              onChange={(value:number) => showConfirm(value, record)}
-          >
-            {state?.BookShelf?.map((item,index)=>(
-               <Option key={index} value={index}>{item.name}</Option>
+      render: (_:any, record:item) => (
+        <Select
+          defaultValue={
+            record.shelfId !== undefined ?
+            (state.BookShelf && state.BookShelf.find(item => item.id === record.shelfId)?.name) :
+            undefined
+          }
+            style={{ width: '100%' }}
+            onChange={(value: string) => showConfirm(value, record)}
+        >
+            {state?.BookShelf?.map((item, index) => (
+                <Option key={item.id} value={item.id}>{item.name}</Option>
             ))}
-             
-             
-          </Select>)
-  },
+        </Select>
+    ) },
     {
       title: 'Operation',
       dataIndex: 'operation',
+      width: '3%',
       render: (_:any,record:item) =>
         (
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id?record?.id:'')}>
-            <a>Delete</a>
+            <a><DeleteFilled/></a>
           </Popconfirm>
         ) 
     },
   ];
 
+
+    
   return (
-    <div className={styles.main}>
-      <h1 className={styles.h1}>Add categories!  </h1>
-      <div >
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }} className={styles.button}>
-        Add 
-      </Button>
-      <Table
-       pagination={{ pageSize: 5 }}
-        className={styles.table}
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        dataSource={dataSource}
-        columns={columns.map((col) => ({
-          ...col,
-          onCell: (record: item) => ({
-            record,
-            editable: col.editable,
-            dataIndex: col.dataIndex,
-            title: col.title,
-            handleSave,
-          }),
-        }))}
-      />
+      <div className={styles.main}>
+        <h1 className={styles.h1}>Add categories!  </h1>
+        <div >
+        <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }} className={styles.button} icon={<PlusCircleFilled />}>
+          Add 
+        </Button>
+        <Table
+        pagination={{ pageSize: 5 }}
+          className={styles.table}
+          components={components}
+          rowClassName={() => 'editable-row'}
+          bordered
+          dataSource={dataSource}
+          columns={columns.map((col) => ({
+            ...col,
+            onCell: (record: item) => ({
+              record,
+              editable: col.editable,
+              dataIndex: col.dataIndex,
+              title: col.title,
+              handleSave,
+            }),
+          }))}
+        />
+        </div>
       </div>
-    </div>
-  );
+    );
 }
 
 export default ManageCategories;

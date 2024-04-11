@@ -6,12 +6,14 @@ import { BookReducer } from "./reducer";
 import {
   BookActionContext,
   BookContext,
+  IBook,
   IBookActionContext,
   IBookStateContext,
+  ICategory,
   INITIAL_STATE,
   IShelf,
 } from "./context";
-import { BookCountRequestAction, BookRequestAction, CategoryAction, ShelfDeleteAction, UpdateDeleteAction, createShelfRequestAction } from "./actions";
+import { BookCountRequestAction, BookRequestAction, CategoryAction, FetchBookAction, ShelfDeleteAction, UpdateDeleteAction, createShelfRequestAction } from "./actions";
 import { message } from "antd";
 import { instance } from "../axiosInstance";
 
@@ -72,12 +74,31 @@ const countBooks = async () => {
 };
 
 //Category
+const createCategory = async (payload: ICategory) => {
+  console.log("payload::", payload);
+  try {
+    const response = await axios.post(
+      `https://localhost:44311/api/services/app/Category/Create`,
+      payload
+    );
+    await fetchCategory;
+    if (response.data.success) {
+      message.success("Shelf successfully created");
+      dispatch(createShelfRequestAction(response.data.result));
+  } else {
+      message.error("Failed to create shelf");
+    }
+  } catch (error) {
+    console.error("Shelf creation error:", error);
+    message.error("Error occurred while creating shelf");
+  }
+};
 const fetchCategory = async () => {
 
   try {
-      const response = await instance.get(`https://localhost:44311/api/services/app/Category/GetAll`);
-      dispatch(CategoryAction(response.data.result.items));
-
+      const response = await instance.get(`https://localhost:44311/api/services/app/Category/GetAllCategories`);
+      dispatch(CategoryAction(response.data.result));
+      
       
   } catch (error) {
       console.error(error);
@@ -91,11 +112,64 @@ const deleteCategory = async (id:string) => {
       console.error(error);
   }
 };
-
+const updateCategory = async (payload:ICategory) => {
+  try {
+    console.log(payload)
+      const response = await instance.put(`https://localhost:44311/api/services/app/Category/Update`,payload);
+      await fetchCategory;
+      
+  } catch (error) {
+      console.error(error);
+  }
+};
+const createBook = async (payload:IBook)=>{
+  try{
+    const response =await instance.post('https://localhost:44311/api/services/app/Book/Create',payload);
+    if (response.data.success) {
+      message.success("Book successfully created");
+      dispatch(createShelfRequestAction(response.data.result));
+      
+    }
+  }catch(error){
+    console.error(error)
+  }
+}
+const fetchBooks =async ()=>{
+  try{
+    const response=await instance.post('https://localhost:44311/api/services/app/Book/CustomGetAll')
+    if(response.data.success){
+      message.success("Books Fetched Successfully")
+      dispatch(FetchBookAction(response.data.result))
+      console.log('Inn')
+    }
+    
+  }catch(error){
+    console.error(error)
+  }
+}
+const deleteBook = async (id:string) => {
+  try {
+      const response = await instance.delete(`https://localhost:44311/api/services/app/Book/Delete?Id=${id}`);
+      await fetchBooks();
+  } catch (error) {
+      console.error(error);
+  }
+};
+const updateBook = async (payload:IBook) => {
+  try {
+    console.log(payload)
+      const response = await instance.put(`https://localhost:44311/api/services/app/Book/Update`,payload);
+      await fetchBooks();
+      
+  } catch (error) {
+      console.error(error);
+  }
+};
 
   return (
     <BookContext.Provider value={state}>
-      <BookActionContext.Provider value={{ createShelf,fetchShelf,deleteShelf,updateShelf,countBooks,fetchCategory,deleteCategory}}>
+      <BookActionContext.Provider value={{ createShelf,fetchShelf,deleteShelf,updateShelf,countBooks,
+        createCategory,fetchCategory,deleteCategory,updateCategory,createBook,fetchBooks,deleteBook,updateBook}}>
         {children}
       </BookActionContext.Provider>
     </BookContext.Provider>
