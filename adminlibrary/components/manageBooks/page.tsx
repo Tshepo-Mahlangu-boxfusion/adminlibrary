@@ -1,5 +1,6 @@
+'use client'
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Space } from 'antd';
+import { Table, Button, Modal, Form, Input, Space, Select } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { IBookStateContext } from '../../providers/BookProvider/context';
 import { useBook, useBookState } from '../../providers/BookProvider';
@@ -15,24 +16,22 @@ interface Book {
   categoryId: string;
 }
 
-
-
 const { Column } = Table;
-const {confirm}=Modal;
+const { confirm } = Modal;
+const { Option } = Select;
+
 const BookTable: React.FC<IBookStateContext> = () => {
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState<Book>({} as Book);
   const [form] = Form.useForm();
-  const {createBook,fetchBooks,deleteBook,fetchCategory,updateBook}=useBook();
-  const state =useBookState();
+  const { createBook, fetchBooks, deleteBook, fetchCategory, updateBook } = useBook();
+  const state = useBookState();
 
-  useEffect(()=>{
-    if(fetchBooks)
-        fetchBooks()
+  useEffect(() => {
+    if (fetchBooks) fetchBooks();
 
-    if(fetchCategory)
-        fetchCategory()
-  },[])
+    if (fetchCategory) fetchCategory();
+  }, []);
 
   const showModal = () => {
     setVisible(true);
@@ -56,6 +55,7 @@ const BookTable: React.FC<IBookStateContext> = () => {
         console.error('Validation failed:', error);
       });
   };
+
   const handleEdit = (record: Book) => {
     setVisible(true);
     form.setFieldsValue(record); // Set form fields with current record's data
@@ -73,7 +73,7 @@ const BookTable: React.FC<IBookStateContext> = () => {
         console.error('Validation failed:', error);
       });
   };
-  
+
   const handleDelete = (id: string) => {
     confirm({
       title: 'Are you sure you want to delete',
@@ -81,9 +81,9 @@ const BookTable: React.FC<IBookStateContext> = () => {
         deleteBook(id);
       },
       onCancel() {
-          return null;
+        return null;
       },
-  });
+    });
   };
 
   return (
@@ -91,30 +91,17 @@ const BookTable: React.FC<IBookStateContext> = () => {
       <Button type="primary" onClick={showModal} icon={<PlusOutlined />}>
         Add Book
       </Button>
-      <Modal
-        title="Add/Edit Book"
-        visible={visible}
-        onCancel={handleCancel}
-        onOk={form.submit}
-      >
+      <Modal title="Edit Book" visible={visible} onCancel={handleCancel} onOk={form.submit}>
         <Form
           form={form}
           layout="vertical"
           onFinish={handleCreate}
           onValuesChange={(changedValues, allValues) => setFormData(allValues as Book)}
         >
-          <Form.Item
-            name="isbn"
-            label="ISBN"
-            rules={[{ required: true, message: 'Please enter the ISBN' }]}
-          >
+          <Form.Item name="isbn" label="ISBN" rules={[{ required: true, message: 'Please enter the ISBN' }]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="title"
-            label="Title"
-            rules={[{ required: true, message: 'Please enter the book title' }]}
-          >
+          <Form.Item name="title" label="Title" rules={[{ required: true, message: 'Please enter the book title' }]}>
             <Input />
           </Form.Item>
           <Form.Item
@@ -138,19 +125,21 @@ const BookTable: React.FC<IBookStateContext> = () => {
           >
             <Input type="number" />
           </Form.Item>
-          <Form.Item
-            name="url"
-            label="URL"
-            rules={[{ required: true, message: 'Please enter the URL' }]}
-          >
+          <Form.Item name="url" label="URL" rules={[{ required: true, message: 'Please enter the URL' }]}>
             <Input />
           </Form.Item>
           <Form.Item
             name="categoryId"
-            label="Category ID"
-            rules={[{ required: true, message: 'Please enter the category ID' }]}
+            label="Category"
+            rules={[{ required: true, message: 'Please select the category' }]}
           >
-            <Input />
+            <Select placeholder="Please select a category">
+              {state.BookCategory?.map((category) => (
+                <Option key={category.id} value={category.id}>
+                  {category.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
@@ -160,13 +149,13 @@ const BookTable: React.FC<IBookStateContext> = () => {
         <Column title="Authors" dataIndex="authors" key="authors" />
         <Column title="Quantity" dataIndex="quantity" key="quantity" />
         <Column
-        title="Category"
-        dataIndex="categoryId"
-        key="categoryId"
-        render={(categoryId: string) => {
-            const category = state.BookCategory?.find(item => item.id === categoryId);
+          title="Category"
+          dataIndex="categoryId"
+          key="categoryId"
+          render={(categoryId: string) => {
+            const category = state.BookCategory?.find((item) => item.id === categoryId);
             return category ? category.name : '';
-        }}
+          }}
         />
         <Column
           title="Action"
@@ -188,3 +177,4 @@ const BookTable: React.FC<IBookStateContext> = () => {
 };
 
 export default BookTable;
+

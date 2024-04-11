@@ -36,7 +36,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 <em>Manage Transactions</em>
 
 
-<img src="assets/ManageBooks.png" alt="View Playlist" width="500" height="auto">  
+<img src="assets/Book.png" alt="View Playlist" width="500" height="auto">  
 <em>Manage Books</em>
 
 
