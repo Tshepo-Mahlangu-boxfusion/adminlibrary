@@ -125,9 +125,10 @@ const ManageCategories:React.FC = () => {
   const handleAdd = () => {
     const newData: any = {
       name: `Name Your Category`,
-      shelfId:''
+      shelfId:state.BookShelf[0].id
+      
     };
-  
+    console.log(state.BookShelf[0])
     // Update the dataSource state with the new item
     setDataSource([...dataSource, newData]);
     
@@ -141,15 +142,16 @@ const ManageCategories:React.FC = () => {
         if(createCategory)
           createCategory(row)
       }
+       else{
+         updateCategory(row);
+       }
       const newData = [...dataSource];
       const index = newData.findIndex((item) => row.id === item.id);
       const item = newData[index];
   
-      // Assuming updateShelf is a function to update the shelf, pass the row.id to updateShelf
       
-      if (row.id!==null&&updateCategory) {
-        updateCategory(row);
-      }
+      
+     
       console.log(row)
   
       newData.splice(index, 1, { ...item, ...row });

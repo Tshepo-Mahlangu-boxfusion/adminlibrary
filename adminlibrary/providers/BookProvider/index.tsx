@@ -1,19 +1,9 @@
 'use client'
-
 import React, { PropsWithChildren, FC, useReducer, useContext } from "react";
 import axios from "axios";
 import { BookReducer } from "./reducer";
-import {
-  BookActionContext,
-  BookContext,
-  IBook,
-  IBookActionContext,
-  IBookStateContext,
-  ICategory,
-  INITIAL_STATE,
-  IShelf,
-} from "./context";
-import { BookCountRequestAction, BookRequestAction, CategoryAction, FetchBookAction, ShelfDeleteAction, UpdateDeleteAction, createShelfRequestAction } from "./actions";
+import {BookActionContext,BookContext,IBook,IBookActionContext, IBookStateContext,ICategory,INITIAL_STATE,IShelf,} from "./context";
+import { BookCountRequestAction, BookRequestAction, CategoryAction, FetchBookAction, ShelfDeleteAction, UpdateDeleteAction, createBookRequestAction, createShelfRequestAction } from "./actions";
 import { message } from "antd";
 import { instance } from "../axiosInstance";
 
@@ -72,8 +62,6 @@ const countBooks = async () => {
       console.error(error);
   }
 };
-
-//Category
 const createCategory = async (payload: ICategory) => {
   console.log("payload::", payload);
   try {
@@ -83,22 +71,20 @@ const createCategory = async (payload: ICategory) => {
     );
     await fetchCategory;
     if (response.data.success) {
-      message.success("Shelf successfully created");
+      message.success("category successfully created");
       dispatch(createShelfRequestAction(response.data.result));
   } else {
-      message.error("Failed to create shelf");
+      message.error("Failed to create category");
     }
   } catch (error) {
-    console.error("Shelf creation error:", error);
-    message.error("Error occurred while creating shelf");
+    console.error("category creation error:", error);
+    message.error("Error occurred while creating category");
   }
 };
 const fetchCategory = async () => {
-
   try {
       const response = await instance.get(`https://localhost:44311/api/services/app/Category/GetAllCategories`);
-      dispatch(CategoryAction(response.data.result));
-      
+      dispatch(CategoryAction(response.data.result));  
       
   } catch (error) {
       console.error(error);
@@ -122,18 +108,6 @@ const updateCategory = async (payload:ICategory) => {
       console.error(error);
   }
 };
-const createBook = async (payload:IBook)=>{
-  try{
-    const response =await instance.post('https://localhost:44311/api/services/app/Book/Create',payload);
-    if (response.data.success) {
-      message.success("Book successfully created");
-      dispatch(createShelfRequestAction(response.data.result));
-      
-    }
-  }catch(error){
-    console.error(error)
-  }
-}
 const fetchBooks =async ()=>{
   try{
     const response=await instance.post('https://localhost:44311/api/services/app/Book/CustomGetAll')
@@ -165,7 +139,31 @@ const updateBook = async (payload:IBook) => {
       console.error(error);
   }
 };
-
+const createBook = async (payload: IBook) => {
+  try {
+    const formData = new FormData();
+    formData.append('categoryId',payload.categoryId)
+    formData.append('title', payload.title);
+    // formData.append('quantity', payload.quantity);
+    formData.append('author', payload.authors.join(', ')); 
+    formData.append('isbn', payload.isbn);
+    formData.append('description', payload.description);
+    formData.append('file', payload.file);
+    const response = await instance.post('https://localhost:44311/api/services/app/Book/createBook', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    if (response.data.success) {
+      message.success("Book successfully created");
+      dispatch(createBookRequestAction(response.data.result));
+    }
+  } catch (error) {
+    console.error(error);
+    // message.error(error.);
+  }
+}
   return (
     <BookContext.Provider value={state}>
       <BookActionContext.Provider value={{ createShelf,fetchShelf,deleteShelf,updateShelf,countBooks,
@@ -175,7 +173,6 @@ const updateBook = async (payload:IBook) => {
     </BookContext.Provider>
   );
 };
-
 export const useBookState = (): IBookStateContext => {
   const context = useContext(BookContext);
   if (!context) {
@@ -198,6 +195,5 @@ const useBook = (): IBookStateContext & IBookActionContext => {
     ...useBookActions(),
   };
 };
-
 export { BookProvider, useBook };
 

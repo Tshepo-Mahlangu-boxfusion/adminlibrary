@@ -1,8 +1,8 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Space, Select } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { IBookStateContext } from '../../providers/BookProvider/context';
+import { Table, Button, Modal, Form, Input, Space, Select, Upload } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined,UploadOutlined } from '@ant-design/icons';
+import { IBook, IBookStateContext } from '../../providers/BookProvider/context';
 import { useBook, useBookState } from '../../providers/BookProvider';
 
 interface Book {
@@ -12,6 +12,8 @@ interface Book {
   description: string;
   authors: string[];
   quantity: number;
+  file?:string;
+  image?:string;
   url: string;
   categoryId: string;
 }
@@ -22,7 +24,7 @@ const { Option } = Select;
 
 const BookTable: React.FC<IBookStateContext> = () => {
   const [visible, setVisible] = useState(false);
-  const [formData, setFormData] = useState<Book>({} as Book);
+  const [formData, setFormData] = useState<IBook>({} as IBook);
   const [form] = Form.useForm();
   const { createBook, fetchBooks, deleteBook, fetchCategory, updateBook } = useBook();
   const state = useBookState();
@@ -42,21 +44,26 @@ const BookTable: React.FC<IBookStateContext> = () => {
   };
 
   const handleCreate = () => {
+    
     form
       .validateFields()
       .then((values) => {
+        const formData = new FormData();
+        console.log(values?.imageUrl.file.originFileObj)
+        formData.append('imageUrl',values?.imageUrl.file.originFileObj)
         const authorsArray = values.authors.split(',').map((author: string) => author.trim());
-        const bookData: Book = { ...values, authors: authorsArray };
-        createBook(bookData);
+        const bookData: IBook = { ...values, authors: authorsArray };
+        if(createBook){createBook({...bookData,file:values?.imageUrl.file.originFileObj})}
+        setFormData(bookData)
         form.resetFields();
         setVisible(false);
       })
       .catch((error) => {
         console.error('Validation failed:', error);
       });
-  };
+  }; 
 
-  const handleEdit = (record: Book) => {
+  const handleEdit = (record: IBook) => {
     setVisible(true);
     form.setFieldsValue(record); // Set form fields with current record's data
     form
@@ -64,7 +71,7 @@ const BookTable: React.FC<IBookStateContext> = () => {
       .then((values) => {
         // Split authors only if it's defined
         const authorsArray = values.authors ? values.authors.split(',').map((author: string) => author.trim()) : [];
-        const bookData: Book = { ...record, ...values, authors: authorsArray }; // Merge record with form values
+        const bookData: IBook = { ...record, ...values, authors: authorsArray }; // Merge record with form values
         updateBook(bookData);
         form.resetFields();
         setVisible(false);
@@ -85,6 +92,7 @@ const BookTable: React.FC<IBookStateContext> = () => {
       },
     });
   };
+  
 
   return (
     <div>
@@ -96,7 +104,7 @@ const BookTable: React.FC<IBookStateContext> = () => {
           form={form}
           layout="vertical"
           onFinish={handleCreate}
-          onValuesChange={(changedValues, allValues) => setFormData(allValues as Book)}
+          onValuesChange={(changedValues, allValues) => setFormData(allValues as IBook)}
         >
           <Form.Item name="isbn" label="ISBN" rules={[{ required: true, message: 'Please enter the ISBN' }]}>
             <Input />
@@ -125,9 +133,14 @@ const BookTable: React.FC<IBookStateContext> = () => {
           >
             <Input type="number" />
           </Form.Item>
-          <Form.Item name="url" label="URL" rules={[{ required: true, message: 'Please enter the URL' }]}>
-            <Input />
-          </Form.Item>
+          <Form.Item
+                      label="Upload Image:"
+                      name='imageUrl'
+                      >
+                      <Upload style={{marginLeft:10}}>
+                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                      </Upload>
+                    </Form.Item>
           <Form.Item
             name="categoryId"
             label="Category"
@@ -160,7 +173,7 @@ const BookTable: React.FC<IBookStateContext> = () => {
         <Column
           title="Action"
           key="action"
-          render={(text: any, record: Book) => (
+          render={(text: any, record: IBook) => (
             <Space size="middle">
               <Button type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
                 Edit

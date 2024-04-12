@@ -14,13 +14,15 @@ import { Payload } from 'recharts/types/component/DefaultLegendContent';
     count?:number;
   }
   export interface IBook{
-    id:string;
+    id?:string;
     isbn: string;
     title: string;
     description: string;
     authors: string[];
     quantity: number;
     url: string;
+    file:string;
+    image:string
     categoryId: string;
   }
   
@@ -44,6 +46,8 @@ export interface IBookStateContext {
      readonly FetchBook?:IBook[];
      readonly DeleteBook?:string;
      readonly UpdateBook?:IBook;
+
+     
 }
 
 
